@@ -2,13 +2,14 @@ import { Book } from "../models/Book";
 import { reactive, readonly, ref } from "vue";
 
 const SHELF_KEY = "YOURSELF_KEY";
-const shelfItems = reactive(new Array<Book>());
+export let shelfItems = reactive(new Array<Book>());
 
-function addToShelf(book: Book) { 
+export function addToShelf(book: Book) {
   shelfItems.push(book);
   storeShelf();
 }
-function removeFromShelf(book: Book) { 
+
+export function removeFromShelf(book: Book) {
   const index = shelfItems.findIndex(b => b.key === book.key);
   if (index > -1) {
     shelfItems.splice(index, 1);
@@ -28,18 +29,15 @@ function readShelf() {
   }
 }
 
-function isOnShelf(book: Book) {
-  return shelfItems.findIndex(b => b.key === book.key) > -1; 
+export function isOnShelf(book: Book) {
+  return shelfItems.findIndex(b => b.key === book.key) > -1;
 }
 
-export default function () {
+if (!shelfItems || shelfItems.length === 0) readShelf();
 
-  if (!shelfItems || shelfItems.length === 0) readShelf();
-
-  return {
-    shelfItems,
-    addToShelf,
-    removeFromShelf,
-    isOnShelf
-  };
-}
+export default {
+  shelfItems,
+  addToShelf,
+  removeFromShelf,
+  isOnShelf
+};
