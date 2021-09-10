@@ -14,11 +14,16 @@
         <a href="#" class="underline text-blue-600 hover:no-underline mx-2" @click="currentPage++">Next</a>
       </div>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-      <div v-for="book in books" :key="book.key" class="border bg-white border-grey-500 m-1 p-1">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 text-center">
+      <div
+        v-for="book in books"
+        :key="book.key"
+        class="border bg-white border-grey-500 m-1 p-1"
+      >
         <router-link :to="{ name: 'book', params: { cover: book.cover_id, title: book.title } }">
           <BookInfo :book="book" />
         </router-link>
+        <button class="btn" @click="addToShelf(book)" :disabled="isOnShelf(book)">Add to Shelf</button>
       </div>
     </div>
   </div>
@@ -30,6 +35,7 @@ import { defineComponent, onMounted, reactive, ref, watch } from "vue";
 import BookInfo from "../components/bookInfo.vue";
 import bookTopics from "../common/bookTopics";
 import { Book } from "../models/Book";
+import ShelfState from "../shelf";
 
 export default defineComponent({
   components: {
@@ -40,6 +46,7 @@ export default defineComponent({
     const currentPage = ref(0);
     const currentTopic = ref(bookTopics[0][0]); // First value
     let topicChanging = false;
+    const { addToShelf, isOnShelf } = ShelfState();
 
     watch(currentPage, async () => {
       if (!topicChanging) {
@@ -70,7 +77,9 @@ export default defineComponent({
       currentPage,
       currentTopic,
       books,
-      bookTopics
+      bookTopics,
+      addToShelf,
+      isOnShelf
     };
   },
 });
