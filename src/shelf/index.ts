@@ -1,43 +1,63 @@
 import { Book } from "../models/Book";
-import { reactive, readonly, ref } from "vue";
+import { createStore } from "vuex";
 
 const SHELF_KEY = "YOURSELF_KEY";
-export let shelfItems = reactive(new Array<Book>());
 
-export function addToShelf(book: Book) {
-  shelfItems.push(book);
-  storeShelf();
+function includesBook(items: Array<Book>, book: Book) {
+  return items.findIndex(b => b.key === book.key) > -1;
 }
 
-export function removeFromShelf(book: Book) {
-  const index = shelfItems.findIndex(b => b.key === book.key);
-  if (index > -1) {
-    shelfItems.splice(index, 1);
-    storeShelf();
-  }
-}
+function initializeState() {
 
-function storeShelf() {
-  localStorage.setItem(SHELF_KEY, JSON.stringify(shelfItems))
-}
-
-function readShelf() {
+  const shelfItems = new Array<Book>()
   const state = localStorage.getItem(SHELF_KEY);
   if (state) {
     const bookList = JSON.parse(state);
-    shelfItems.splice(0, shelfItems.length, ...bookList);
+    shelfItems.push(...bookList);
   }
+
+  return {
+    shelfItems, 
+    isBusy: false,
+    error: ""
+  };
 }
 
-export function isOnShelf(book: Book) {
-  return shelfItems.findIndex(b => b.key === book.key) > -1;
-}
+export default createStore({
+  state: initializeState,
+  mutations: {
+    saveToLocalStorage(state) {
+      localStorage.setItem(SHELF_KEY, JSON.stringify(state.shelfItems))
+    },
+    add: (state, book) => state.shelfItems.push(book),
+    remove: (state, book) => {
+      const index = state.shelfItems.findIndex(b => b.key === book.key);
+      state.shelfItems.splice(index, 1);
+    }
+  },
+  actions: {
+    addToShelf({commit, getters }, book: Book) {
+      if (!getters.isOnShelf(book)) {
+        commit("add", book);
+      }
+      commit("saveToLocalStorage");
+    },
+    removeFromShelf({commit, getters}, book: Book) {
+      if (getters.isOnShelf(book)) {
+        commit("remove", book);
+        commit("saveToLocalStorage");
+      }
+    }
 
-if (!shelfItems || shelfItems.length === 0) readShelf();
+  },
+  getters: {
+    isOnShelf: (state) => (book: Book) => {
+      console.log(`Is on shelf: ${state.shelfItems.includes(book)}`)
+      return includesBook(state.shelfItems, book);
+    }
+  }
+});
 
-export default {
-  shelfItems,
-  addToShelf,
-  removeFromShelf,
-  isOnShelf
-};
+
+
+

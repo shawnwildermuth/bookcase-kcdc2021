@@ -11,17 +11,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import BookInfo from "../components/bookInfo.vue";
-import { shelfItems, removeFromShelf } from "../shelf";
+import store from "../shelf";
+import { Book } from "../models/Book";
 
 export default defineComponent({
   components: { BookInfo },
   setup() {
 
+    const shelfItems = computed(() => store.state.shelfItems);
     return {
       shelfItems,
-      removeFromShelf,
+      removeFromShelf: (book: Book) => store.dispatch("removeFromShelf", book)
     };
   },
 });

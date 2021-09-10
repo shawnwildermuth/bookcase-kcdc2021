@@ -35,7 +35,7 @@ import { defineComponent, onMounted, reactive, ref, watch } from "vue";
 import BookInfo from "../components/bookInfo.vue";
 import bookTopics from "../common/bookTopics";
 import { Book } from "../models/Book";
-import { addToShelf, isOnShelf } from "../shelf";
+import store from "../shelf";
 
 export default defineComponent({
   components: {
@@ -72,13 +72,14 @@ export default defineComponent({
       }
     }
 
+
     return {
       currentPage,
       currentTopic,
       books,
       bookTopics,
-      addToShelf,
-      isOnShelf
+      addToShelf: (book: Book) => store.dispatch("addToShelf", book),
+      isOnShelf: (book: Book) => store.getters.isOnShelf(book)
     };
   },
 });
