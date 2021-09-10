@@ -13,12 +13,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import BookInfo from "../components/bookInfo.vue";
-import ShelfFactory from "../shelf";
+import { shelfItems, removeFromShelf } from "../shelf";
 
 export default defineComponent({
   components: { BookInfo },
   setup() {
-    const { shelfItems, removeFromShelf } = ShelfFactory();
 
     return {
       shelfItems,

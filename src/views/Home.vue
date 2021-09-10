@@ -31,7 +31,7 @@ import { defineComponent, onMounted, reactive, ref, watch } from "vue";
 import BookInfo from "../components/bookInfo.vue";
 import bookTopics from "../common/bookTopics";
 import { Book } from "../models/Book";
-import ShelfState from "../shelf";
+import { addToShelf, isOnShelf } from "../shelf";
 
 export default defineComponent({
   components: {
@@ -42,7 +42,6 @@ export default defineComponent({
     const currentPage = ref(0);
     const currentTopic = ref(bookTopics[0][0]); // First value
     let topicChanging = false;
-    const { addToShelf, isOnShelf } = ShelfState();
 
     watch(currentPage, async () => {
       if (!topicChanging) {
