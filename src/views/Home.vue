@@ -8,11 +8,18 @@
             <option v-for="[val, desc] in bookTopics" :value="val" :key="val">{{ desc }}</option>
           </select>
         </label>
-      </div>
-      <div>
-        <a href="#" class="underline text-blue-600 hover:no-underline mx-2" v-if="currentPage > 0" @click="currentPage--"> Prev</a>
-        <a href="#" class="underline text-blue-600 hover:no-underline mx-2" @click="currentPage++">Next</a>
-      </div>
+      <a href="#"
+        class="underline text-blue-600 hover:no-underline mx-2"
+        v-if="canPrev"
+        @click="prev"
+      >
+        Prev</a>
+      <a href="#"
+        class="underline text-blue-600 hover:no-underline mx-2"
+        v-if="canNext"
+        @click="next"
+        >Next</a>
+        </div>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 text-center">
       <div
@@ -20,7 +27,7 @@
         :key="book.key"
         class="border bg-white border-grey-500 m-1 p-1"
       >
-        <router-link :to="{ name: 'book', params: { cover: book.cover_id, title: book.title } }">
+        <router-link :to="{ name: 'book', params: { bookKey: book.key } }">
           <BookInfo :book="book" />
         </router-link>
         <button class="btn" @click="addToShelf(book)" :disabled="isOnShelf(book)">Add to Shelf</button>
@@ -30,56 +37,35 @@
 </template>
 
 <script lang="ts">
-import bookService from "../bookService";
-import { defineComponent, onMounted, reactive, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import BookInfo from "../components/bookInfo.vue";
-import bookTopics from "../common/bookTopics";
 import { Book } from "../models/Book";
 import store from "../shelf";
+import bookTopics from "../common/bookTopics";
 
 export default defineComponent({
   components: {
     BookInfo,
   },
   setup() {
-    const books: Book[] = reactive([]);
-    const currentPage = ref(0);
-    const currentTopic = ref(bookTopics[0][0]); // First value
-    let topicChanging = false;
-
-    watch(currentPage, async () => {
-      if (!topicChanging) {
-        await loadBooks(currentTopic.value);
-      }
-    });
-
-    watch(currentTopic, async () => {
-      try {
-        topicChanging = true;
-        currentPage.value = 0;
-        await loadBooks(currentTopic.value);
-      } finally {
-        topicChanging = false;
-      }
-    });
-
-    onMounted(async () => loadBooks(currentTopic.value));
-
-    async function loadBooks(val: string) {
-      const response = await bookService.getBooks(val, currentPage.value);
-      if (response.status === 200) {
-        books.splice(0, books.length, ...response.data.works);
-      }
-    }
-
+    const books = computed(() => store.state.subjectResults);
+    const currentTopic = ref(bookTopics[0][0]);
+    const canPrev = computed(() => store.getters.canMovePrev);
+    const canNext = computed(() => store.getters.canMoveNext);
+    
+    watch(currentTopic, () => store.dispatch("changeTopic", currentTopic.value))
+    onMounted(() => store.dispatch("changeTopic", currentTopic.value));
 
     return {
-      currentPage,
       currentTopic,
       books,
       bookTopics,
       addToShelf: (book: Book) => store.dispatch("addToShelf", book),
-      isOnShelf: (book: Book) => store.getters.isOnShelf(book)
+      isOnShelf: (book: Book) => store.getters.isOnShelf(book),
+      next: () => store.dispatch("nextPage"),
+      prev: () => store.dispatch("prevPage"),
+      canPrev,
+      canNext
     };
   },
 });

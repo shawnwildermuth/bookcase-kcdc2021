@@ -10,7 +10,7 @@ const routes: Array<RouteRecordRaw> = [
     component: Home
   },
   {
-    path: '/book',
+    path: '/book/:bookKey',
     name: 'book',
     component: Book,
     props: true
