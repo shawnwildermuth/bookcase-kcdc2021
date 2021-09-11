@@ -1,10 +1,10 @@
 <template>
-  <div class="container mx-auto bg-gray-100 p-1">
-    <div class="flex justify-between  mt-2">
-      <h1>The Bookstore</h1>
+  <div class="container mx-auto bg-white">
+    <div class="flex justify-between m-0 p-2 bg-gray-700 mb-2">
+      <h1><router-link to="/" class="text-yellow-400 hover:text-yellow-600">The Bookstore</router-link></h1>
       <ul class="flex">
-        <li><router-link to="/" class="text-blue-100 bg-blue-600 rounded p-2 mx-2 hover:bg-blue-500">Home</router-link></li>
-        <li><router-link to="/shelf" class="text-blue-100 bg-blue-600 rounded p-2 mx-2 hover:bg-blue-500">Your Bookshelf</router-link></li>
+        <li><router-link to="/" class="text-yellow-400 underline hover:text-yellow-600 mr-1">Home</router-link></li>
+        <li><router-link to="/shelf" class="text-yellow-400 underline hover:text-yellow-600 ml-1">Your Bookshelf</router-link></li>
       </ul>
     </div>
     <div class="alert" v-if="false">Errors</div>
