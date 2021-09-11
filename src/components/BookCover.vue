@@ -1,5 +1,5 @@
 <template>
-  <div class="w-32 h-48 mx-auto flex justify-center items-center">
+  <div class="w-32 h-48 mx-auto flex justify-center items-center overflow-hidden">
     <img :src="`http://covers.openlibrary.org/b/id/${coverId}-M.jpg`" class="cover-image" />
   </div>
 </template>
