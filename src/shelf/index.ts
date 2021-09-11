@@ -38,7 +38,7 @@ export default createStore({
         commit("saveToLocalStorage");
       }
     },
-    async changeTopic({state, commit, dispatch}, topic) {
+    async changeTopic({ state, commit, dispatch }, topic) {
       if (state.currentTopic != topic) {
         commit("setTopic", topic);
         commit("resetPage");
@@ -46,7 +46,7 @@ export default createStore({
       }
     },
     async loadResults({ state, commit }) {
-      
+
       commit("clearError");
       commit("setBusy");
 
@@ -63,12 +63,13 @@ export default createStore({
       }
       commit("setError", "Could not load books from OpenLibrary. Please try again.");
 
+
     },
-    async nextPage({state, commit, dispatch}) {
+    async nextPage({ state, commit, dispatch }) {
       commit("incrementPage");
       await dispatch("loadResults", state.currentTopic)
     },
-    async prevPage({state, commit, dispatch}) {
+    async prevPage({ state, commit, dispatch }) {
       commit("decrementPage")
       await dispatch("loadResults", state.currentTopic)
     }

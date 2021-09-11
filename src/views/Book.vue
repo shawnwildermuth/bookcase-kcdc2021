@@ -2,12 +2,16 @@
   <div class="about">
     <button class="btn" @click="router.back()">Back</button>
     <div v-if="book">
-      <div class="flex flex-col">
-        <img :src="`http://covers.openlibrary.org/b/id/${book.cover_id}-L.jpg`" class="w-72 shadow" />
+      <div class="flex justify-start">
+        <div class="w-48 md:w-96 p-4">
+          <img :src="`http://covers.openlibrary.org/b/id/${book.cover_id}-L.jpg`" class="full-cover-image" />
+        </div>
         <div class="p-2">
           <div>
             <strong>{{ book.title }}</strong>
-            <div v-for="author in book.authors" :key="author.key"><em>{{ author.name }}</em></div>
+            <div v-for="author in book.authors" :key="author.key">
+              <em>{{ author.name }}</em>
+            </div>
           </div>
         </div>
       </div>
@@ -29,7 +33,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    
     const book = ref<Book | null>(null);
 
     if (!props.bookKey) {
@@ -38,7 +41,7 @@ export default defineComponent({
     }
 
     book.value = store.getters.findBook(decodeURIComponent(props.bookKey));
-    if (!book) {
+    if (!book.value) {
       // redirect if we can't find the book
       console.log("Cannot find the book");
       router.push("/");
@@ -51,3 +54,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.full-cover-image {
+  filter: drop-shadow(3px 3px 4px #888);
+}
+</style>

@@ -8,25 +8,12 @@
             <option v-for="[val, desc] in bookTopics" :value="val" :key="val">{{ desc }}</option>
           </select>
         </label>
-      <a href="#"
-        class="underline text-blue-600 hover:no-underline mx-2"
-        v-if="canPrev"
-        @click="prev"
-      >
-        Prev</a>
-      <a href="#"
-        class="underline text-blue-600 hover:no-underline mx-2"
-        v-if="canNext"
-        @click="next"
-        >Next</a>
-        </div>
+      </div>
+      <a href="#" class="underline text-blue-600 hover:no-underline mx-2" v-if="canPrev" @click="prev"> Prev</a>
+      <a href="#" class="underline text-blue-600 hover:no-underline mx-2" v-if="canNext" @click="next">Next</a>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 text-center">
-      <div
-        v-for="book in books"
-        :key="book.key"
-        class="border bg-white border-grey-500 m-1 p-1"
-      >
+      <div v-for="book in books" :key="book.key" class="border bg-white border-grey-500 m-1 p-1">
         <router-link :to="{ name: 'book', params: { bookKey: book.key } }">
           <BookInfo :book="book" />
         </router-link>
@@ -49,11 +36,11 @@ export default defineComponent({
   },
   setup() {
     const books = computed(() => store.state.subjectResults);
-    const currentTopic = ref(bookTopics[0][0]);
+    const currentTopic = ref("cats");
     const canPrev = computed(() => store.getters.canMovePrev);
     const canNext = computed(() => store.getters.canMoveNext);
-    
-    watch(currentTopic, () => store.dispatch("changeTopic", currentTopic.value))
+
+    watch(currentTopic, () => store.dispatch("changeTopic", currentTopic.value));
     onMounted(() => store.dispatch("changeTopic", currentTopic.value));
 
     return {
@@ -65,7 +52,7 @@ export default defineComponent({
       next: () => store.dispatch("nextPage"),
       prev: () => store.dispatch("prevPage"),
       canPrev,
-      canNext
+      canNext,
     };
   },
 });
